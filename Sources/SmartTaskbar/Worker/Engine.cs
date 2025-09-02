@@ -21,10 +21,11 @@ namespace SmartTaskbar
 
         public Engine(Container container)
         {
-            // 125 milliseconds is a balance between user-acceptable perception and system call time.
+            // Poll every 30 milliseconds and use counters to preserve the
+            // previous timing behaviour while staying within the 30ms limit.
             _timer = new Timer(container)
             {
-                Interval = 125
+                Interval = 30
             };
             _timer.Tick += Timer_Tick;
             _timer.Start();
@@ -35,8 +36,8 @@ namespace SmartTaskbar
             if (UserSettings.AutoModeType != AutoModeType.Auto)
                 return;
 
-            // get taskbar every 1.25 second.
-            if (_timerCount % 5 == 0)
+            // get taskbar roughly every 0.63 second.
+            if (_timerCount % 21 == 0)
             {
                 // Make sure the taskbar has been automatically hidden, otherwise it will not work
                 Fun.SetAutoHide();
@@ -69,7 +70,7 @@ namespace SmartTaskbar
             ++_timerCount;
 
             // clear cache and reset stable every 15 min.
-            if (_timerCount <= 7200) return;
+            if (_timerCount <= 30000) return;
 
             _timerCount = 0;
 

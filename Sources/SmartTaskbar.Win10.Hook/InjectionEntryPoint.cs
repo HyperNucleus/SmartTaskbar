@@ -28,11 +28,16 @@ namespace SmartTaskbar.Hook
             _server.Ping();
             try
             {
+                var lastPing = Environment.TickCount;
                 while (true)
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(30);
 
-                    _server.Ping();
+                    if (Environment.TickCount - lastPing >= 1000)
+                    {
+                        _server.Ping();
+                        lastPing = Environment.TickCount;
+                    }
                 }
             }
             finally
